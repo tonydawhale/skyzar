@@ -1,0 +1,6 @@
+*.env
+*.dill
+*.dylib
+*.exe
+*.exe~
+*.so
