@@ -3,17 +3,20 @@ module skyzar-backend
 go 1.18
 
 require (
-	github.com/TwiN/go-color v1.4.0 // indirect
-	github.com/gin-contrib/cors v1.4.0 // indirect
+	github.com/TwiN/go-color v1.4.0
+	github.com/gin-contrib/cors v1.4.0
+	github.com/gin-gonic/gin v1.8.1
+	github.com/go-co-op/gocron v1.30.1
+	github.com/joho/godotenv v1.5.1
+)
+
+require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
-	github.com/go-co-op/gocron v1.30.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

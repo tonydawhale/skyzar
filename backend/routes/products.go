@@ -5,9 +5,9 @@ import (
 )
 
 func GetProducts(c *gin.Context) {
-
+	c.JSON(200, gin.H{"message": "Hello World"})
 }
 
 func GetProduct(c *gin.Context) {
-
+	c.JSON(200, gin.H{"message": "Hello World"})
 }

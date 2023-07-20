@@ -35,8 +35,8 @@ func InitRoutes() {
 	recipes := Router.Group("/api/recipes")
 	{
 		recipes.GET("/", GetRecipes)
-		recipes.GET("/:id", GetRecipe)
 		recipes.POST("/", CreateRecipe)
+		recipes.GET("/:id", GetRecipe)
 		recipes.PUT("/:id", UpdateRecipe)
 		recipes.DELETE("/:id", DeleteRecipe)
 	}

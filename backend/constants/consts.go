@@ -13,22 +13,24 @@ var (
 	Port int
 	HypixelAPIKey string
 	MongoURI string
+	MongoDatabase string
 	CloudflareTurnstileSecret string
 )
 
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		logging.LogFatal("Error loading .env file")
+		logging.Fatal("Error loading .env file")
 	}
 
 	Port, err = strconv.Atoi(getEnv("PORT"))
 	if err != nil {
-		logging.LogFatal("Invalid PORT env variable")
+		logging.Fatal("Invalid PORT env variable")
 	}
 
 	HypixelAPIKey = getEnv("HYPIXEL_API_KEY")
 	MongoURI = getEnv("MONGO_URI")
+	MongoDatabase = getEnv("MONGO_DATABASE")
 	CloudflareTurnstileSecret = getEnv("CLOUDFLARE_TURNSTILE_SECRET")
 }
 
@@ -39,7 +41,7 @@ func LoadConsts() {
 func getEnv(key string) string {
 	val := os.Getenv(key)
 	if val == "" {
-		logging.LogFatal("Environment variable " + key + " not set")
+		logging.Fatal("Environment variable " + key + " not set")
 	}
 	return val
 }

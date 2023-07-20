@@ -1,5 +1,9 @@
 package structs
 
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type CloudflarePost struct {
 	Cf string `json:"cf-turnstile-response"`
 }
@@ -13,7 +17,7 @@ type CloudflareRes struct {
 	Cdata 			string `json:"cdata"`
 }
 
-type HypixelBazaarApiRes struct {
+type HypixelSkyblockBazaarApiRes struct {
 	Success 		bool `json:"success"`
 	LastUpdated 	int `json:"lastUpdated"`
 	Products 		map[string]HypixelBazaarProduct `json:"products"`
@@ -43,4 +47,28 @@ type HypixelBazaarProductQuickStatus struct {
 	BuyVolume 		int `json:"buyVolume"`
 	BuyMovingWeek	int `json:"buyMovingWeek"`
 	BuyOrders		int `json:"buyOrders"`
+}
+
+type HypixelSkyblockItemApiRes struct {
+	Success 		bool `json:"success"`
+	LastUpdated 	int `json:"lastUpdated"`
+	Items 			[]HypixelSkyblockItem `json:"items"`
+	Cause 			string `json:"cause,omitempty"`
+}
+
+type HypixelSkyblockItem struct {
+	Id 				string `json:"id"`
+	Material 		string `json:"material"`
+	Name 			string `json:"name"`
+	NpcSellPrice 	int `json:"npc_sell_price"`
+	Tier 			string `json:"tier"`
+	Category 		string `json:"category"`
+	Skin 			string `json:"skin,omitempty"`
+}
+
+type SkyblockItemRecipe struct {
+	Id 				primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	ItemID 			string `json:"id" bson:"itemId,omitempty"`
+	Costs 			map[string]int `json:"costs" bson:"cost,omitempty"`
+	DeepCost 		map[string]int `json:"deepCost,omitempty" bson:"deepCost,omitempty"`
 }

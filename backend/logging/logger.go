@@ -15,7 +15,7 @@ func Debug(message string) {
 	println(color.With(color.Cyan, "[" + getTime() + "] - [Skyzar-DEBUG] " + message))
 }
 
-func LogWarn(message string) {
+func Warn(message string) {
 	println(color.With(color.Yellow, "[" + getTime() + "] - [Skyzar-WARN] " + message))
 }
 func Log(message string) {
@@ -24,6 +24,9 @@ func Log(message string) {
 func Error(message string) {
 	println(color.With(color.Red, "[" + getTime() + "] - [Skyzar-ERROR] " + message))
 }
-func LogFatal(message string) {
+func Info(message string) {
+	println(color.With(color.Gray, "[" + getTime() + "] - [Skyzar-INFO] " + message))
+}
+func Fatal(message string) {
 	log.Fatal(color.With(color.Red, "[" + getTime() + "] - [Skyzar-FATAL] " + message))
 }
