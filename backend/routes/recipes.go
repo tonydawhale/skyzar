@@ -46,9 +46,25 @@ func CreateRecipe(c *gin.Context) {
 }
 
 func UpdateRecipe(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "Hello World"})
+	var recipe structs.SkyblockItemRecipe
+	if err := c.BindJSON(&recipe); err != nil {
+		logging.Error("Failed to bind JSON, error: " + err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid JSON"})
+		return
+	}
+	if err := database.UpdateRecipe(c.Param("id"), recipe); err != nil {
+		logging.Error("Failed to update recipe, error: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
+	}
+	c.Status(http.StatusOK)
 }
 
 func DeleteRecipe(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "Hello World"})
+	if err := database.DeleteRecipe(c.Param("id")); err != nil {
+		logging.Error("Failed to delete recipe, error: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
+	}
+	c.Status(http.StatusOK)
 }

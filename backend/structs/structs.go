@@ -60,15 +60,76 @@ type HypixelSkyblockItem struct {
 	Id 				string `json:"id"`
 	Material 		string `json:"material"`
 	Name 			string `json:"name"`
-	NpcSellPrice 	int `json:"npc_sell_price"`
+	NpcSellPrice 	float64 `json:"npc_sell_price"`
 	Tier 			string `json:"tier"`
 	Category 		string `json:"category"`
 	Skin 			string `json:"skin,omitempty"`
 }
 
+type HypixelReadableItemNames struct {
+	Id 				string `json:"_id,omitempty" bson:"_id,omitempty"`
+	Items			map[string]string `json:"products" bson:"products"`
+}
+
 type SkyblockItemRecipe struct {
 	Id 				primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	ItemID 			string `json:"id" bson:"itemId,omitempty"`
-	Costs 			map[string]int `json:"costs" bson:"cost,omitempty"`
+	ItemID 			string `json:"itemId" bson:"itemId"`
+	Costs 			map[string]int `json:"costs" bson:"costs"`
+	Count			int `json:"count,omitempty" bson:"count,omitempty"`
 	DeepCost 		map[string]int `json:"deepCost,omitempty" bson:"deepCost,omitempty"`
+}
+
+type SkyblockBazaarItem struct {
+	Id 							string `json:"_id" bson:"_id"`
+	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	LastUpdated 				int `json:"last_updated" bson:"last_updated"`
+	SellData					[]HypixelBazaarProductBuySellSummaryItem `json:"sell_data" bson:"sell_data"`
+	BuyData						[]HypixelBazaarProductBuySellSummaryItem `json:"buy_data" bson:"buy_data"`
+	SellPrice 					float64 `json:"sell_price" bson:"sell_price"`
+	SellVolume 					int `json:"sell_volume" bson:"sell_volume"`
+	SellMovingWeek 				int `json:"sell_moving_week" bson:"sell_moving_week"`
+	SellOrders 					int `json:"sell_orders" bson:"sell_orders"`
+	BuyPrice 					float64 `json:"buy_price" bson:"buy_price"`
+	BuyVolume 					int `json:"buy_volume" bson:"buy_volume"`
+	BuyMovingWeek				int `json:"buy_moving_week" bson:"buy_moving_week"`
+	BuyOrders					int `json:"buy_orders" bson:"buy_orders"`
+	Margin 						float64 `json:"margin" bson:"margin"`
+	MarginPercent 				float64 `json:"margin_percent" bson:"margin_percent"`
+	// History						struct {
+	// 	Hourly 						[]SkyblockBazaarItemHistoryData `json:"hourly" bson:"hourly"`
+	// 	Daily 						[]SkyblockBazaarItemHistoryData `json:"daily" bson:"daily"`
+	// } `json:"history" bson:"history"`
+}
+
+type SkyblockBazaarItemHistoryData struct {
+	Time 						int `json:"time" bson:"time"`
+	SellPrice 					float64 `json:"sell_price" bson:"sell_price"`
+	BuyPrice 					float64 `json:"buy_price" bson:"buy_price"`
+}
+
+type SkyblockBazaarTopItem struct {
+	Id 							primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	BuyPrice 					float64 `json:"buy_price" bson:"buy_price"`
+	BuyVolume 					int `json:"buy_volume" bson:"buy_volume"`
+	Margin 						float64 `json:"margin" bson:"margin"`
+	MarginPercent 				float64 `json:"margin_percent" bson:"margin_percent"`
+	SellPrice 					float64 `json:"sell_price" bson:"sell_price"`
+	SellVolume 					int `json:"sell_volume" bson:"sell_volume"`
+}
+
+type SkyblockBazaarCraftableItem struct {
+	Id 							primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	EstimatedCost 				int `json:"estimated_cost" bson:"estimated_cost"`
+	EstimatedProfit 			int `json:"estimated_profit" bson:"estimated_profit"`
+	EstimatedProfitPercentage 	float64 `json:"estimated_profit_percentage" bson:"estimated_profit_percentage"`
+	SellPrice 					float64 `json:"sell_price" bson:"sell_price"`
+	ResourcedUsed 				[]SkyblockBazaarCraftingResource `json:"resources_used" bson:"resources_used"`
+}
+
+type SkyblockBazaarCraftingResource struct {
+	Id 							primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	ResourceId 					string `json:"resource_id" bson:"resource_id"`
 }

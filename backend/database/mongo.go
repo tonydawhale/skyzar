@@ -24,6 +24,6 @@ func StartClient() {
 	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		logging.Fatal("Failed to ping mongo client, error: " + err.Error())
 	}
-	logging.Log("Successfully initialized and pinged mongo client")
+	logging.Info("Successfully initialized and pinged mongo client")
 	MongoClient = client
 }

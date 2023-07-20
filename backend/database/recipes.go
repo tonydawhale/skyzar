@@ -18,11 +18,9 @@ func GetRecipes() ([]structs.SkyblockItemRecipe, error) {
 	var recipes []structs.SkyblockItemRecipe
 
 	filter := bson.M{}
-	opts := options.Find().SetProjection(bson.M{"_id": 0})
 	cursor, err := collection.Find(
 		context.TODO(),
 		filter,
-		opts,
 	)
 	if err != nil {
 		return recipes, err
@@ -58,13 +56,36 @@ func GetRecipe(id string) (structs.SkyblockItemRecipe, error) {
 
 	var recipe structs.SkyblockItemRecipe
 	
-	filter := bson.M{"id": id}
-	opts := options.FindOne().SetProjection(bson.M{"_id": 0})
+	filter := bson.M{"itemId": id}
 	err := collection.FindOne(
 		context.TODO(),
 		filter,
-		opts,
 	).Decode(&recipe)
 
 	return recipe, err
+}
+
+func UpdateRecipe(id string, data structs.SkyblockItemRecipe) error {
+	database := MongoClient.Database(constants.MongoDatabase)
+	collection := database.Collection("recipes")
+
+	_, err := collection.UpdateOne(
+		context.TODO(),
+		bson.M{"itemId": id},
+		bson.M{
+			"$set": data,
+		},
+	)
+	return err
+}
+
+func DeleteRecipe(id string) error {
+	database := MongoClient.Database(constants.MongoDatabase)
+	collection := database.Collection("recipes")
+
+	_, err := collection.DeleteOne(
+		context.TODO(),
+		bson.M{"itemId": id},
+	)
+	return err
 }

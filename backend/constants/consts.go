@@ -35,7 +35,7 @@ func init() {
 }
 
 func LoadConsts() {
-	logging.Debug("Successfully loaded all environment variables")
+	logging.Info("Successfully loaded all environment variables")
 }
 
 func getEnv(key string) string {

@@ -10,10 +10,20 @@ import (
 	"skyzar-backend/structs"
 )
 
-func GetHypixelBazaarData() (*structs.HypixelSkyblockBazaarApiRes, error) {
-	logging.Log("Request to Hypixel Bazaar API Initiated")
+func hypixelRequest(endpoint string) (*http.Response, error) {
+	logging.Log("Request to Hypixel API Initiated - Endpoint: " + endpoint)
 	start := time.Now()
-	HypixelResp, err := http.Get("https://api.hypixel.net/skyblock/bazaar")
+	HypixelResp, err := http.Get("https://api.hypixel.net/" + endpoint)
+	if err != nil {
+		logging.Error("Error getting Hypixel data, error: " + err.Error())
+		return nil, err
+	}
+	logging.Log("Request to Hypixel API Completed in " + time.Since(start).String())
+	return HypixelResp, nil
+}
+
+func GetHypixelBazaarData() (*structs.HypixelSkyblockBazaarApiRes, error) {
+	HypixelResp, err := hypixelRequest("skyblock/bazaar")
 	if err != nil {
 		logging.Error("Error getting Hypixel Bazaar data, error: " + err.Error())
 		return nil, err
@@ -27,14 +37,11 @@ func GetHypixelBazaarData() (*structs.HypixelSkyblockBazaarApiRes, error) {
 		logging.Error("Error getting Hypixel Bazaar data, error: " + HypixelBazaarApiResponse.Cause)
 		return nil, errors.New("error getting hypixel bazaar data")
 	}
-	logging.Log("Request to Hypixel Bazaar API Completed in " + time.Since(start).String())
 	return &HypixelBazaarApiResponse, nil
 }
 
 func GetHypixelSkyblockItemData() (*structs.HypixelSkyblockItemApiRes, error) {
-	logging.Log("Request to Hypixel Skyblock Item API Initiated")
-	start := time.Now()
-	HypixelResp, err := http.Get("https://api.hypixel.net/skyblock/items")
+	HypixelResp, err := hypixelRequest("resources/skyblock/items")
 	if err != nil {
 		logging.Error("Error getting Hypixel Skyblock Item data, error: " + err.Error())
 		return nil, err
@@ -48,6 +55,5 @@ func GetHypixelSkyblockItemData() (*structs.HypixelSkyblockItemApiRes, error) {
 		logging.Error("Error getting Hypixel Skyblock Item data, error: " + HypixelSkyblockItemApiResponse.Cause)
 		return nil, errors.New("error getting hypixel skyblock item data")
 	}
-	logging.Log("Request to Hypixel Skyblock Item API Completed in " + time.Since(start).String())
 	return &HypixelSkyblockItemApiResponse, nil
 }

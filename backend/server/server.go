@@ -20,10 +20,11 @@ func init() {
 
 func StartServer() {
 	Router.Use(cors.Default())
+	Router.Use(gin.Recovery())
 	
 	routes.Router = Router
 	routes.InitRoutes()
 
-	logging.Debug("Server starting on " + strconv.Itoa(constants.Port))
+	logging.Info("Server starting on " + strconv.Itoa(constants.Port))
 	Router.Run()
 }

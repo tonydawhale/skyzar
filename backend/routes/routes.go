@@ -40,6 +40,8 @@ func InitRoutes() {
 		recipes.PUT("/:id", UpdateRecipe)
 		recipes.DELETE("/:id", DeleteRecipe)
 	}
+
+	logging.Info("Routes initialized")
 }
 
 func cloudflareMiddleware() gin.HandlerFunc {
