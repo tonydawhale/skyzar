@@ -2,18 +2,14 @@ package constants
 
 import (
 	"os"
-	"strconv"
 
-	"skyzar-backend/logging"
+	"skyzar-database/logging"
+	"skyzar-database/structs"
 
 	"github.com/joho/godotenv"
 )
 
 var (
-	Port int
-
-	ApiAuthToken string
-
 	HypixelAPIKey string
 
 	MongoURI string
@@ -22,7 +18,7 @@ var (
 	MongoProductHistoryCollection string
 	MongoReadableNamesCollection string 
 
-	CloudflareTurnstileSecret string
+	Base24hHistoryData []structs.SkyblockBazaarItemHistoryData
 
 	BazaarTopMarginQuota float64
 	BazaarTopMarginPercentQuota float64
@@ -35,13 +31,6 @@ func init() {
 		logging.Fatal("Error loading .env file")
 	}
 
-	Port, err = strconv.Atoi(getEnv("PORT"))
-	if err != nil {
-		logging.Fatal("Invalid PORT env variable")
-	}
-
-	ApiAuthToken = getEnv("HYPIXEL_API_KEY")
-
 	HypixelAPIKey = getEnv("HYPIXEL_API_KEY")
 
 	MongoURI = getEnv("MONGO_URI")
@@ -50,7 +39,7 @@ func init() {
 	MongoProductHistoryCollection = getEnv("MONGO_PRODUCT_HISTORY_COLLECTION")
 	MongoReadableNamesCollection = getEnv("MONGO_READABLE_NAMES_COLLECTION")
 
-	CloudflareTurnstileSecret = getEnv("CLOUDFLARE_TURNSTILE_SECRET")
+	Base24hHistoryData = make([]structs.SkyblockBazaarItemHistoryData, 1440)
 
 	BazaarTopMarginQuota = 10000
 	BazaarTopMarginPercentQuota = 0.33

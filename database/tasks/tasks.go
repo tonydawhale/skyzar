@@ -4,15 +4,16 @@ import (
 	"strings"
 	"time"
 
-	"skyzar-backend/database"
-	"skyzar-backend/logging"
-	"skyzar-backend/requests"
-	"skyzar-backend/structs"
-	"skyzar-backend/utils"
+	"skyzar-database/constants"
+	"skyzar-database/database"
+	"skyzar-database/logging"
+	"skyzar-database/requests"
+	"skyzar-database/structs"
+	"skyzar-database/utils"
 
 	"github.com/go-co-op/gocron"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/exp/slices"
 )
 
@@ -43,9 +44,13 @@ func refreshBazaarPriceData() {
 
 	itemNameKeys := utils.ObjectKeys(itemNames.Items)
 
-	models := []mongo.WriteModel{}
+	productModels := []mongo.WriteModel{}
+	historyModels := []mongo.WriteModel{}
 
 	for _, product := range bazaarData.Products {
+		if product.ProductId == "ENCHANTED_CARROT_ON_A_STICK" {
+			continue
+		}
 		var bazaarProduct structs.SkyblockBazaarItem = structs.SkyblockBazaarItem{
 			HypixelProductId: product.ProductId,
 			LastUpdated: bazaarData.LastUpdated,
@@ -90,15 +95,73 @@ func refreshBazaarPriceData() {
 			bazaarProduct.MarginPercent = (product.BuySummary[0].PricePerUnit - product.SellSummary[0].PricePerUnit) / product.BuySummary[0].PricePerUnit
 		}
 		
-		models = append(models, 
+		productModels = append(productModels, 
 			mongo.NewUpdateOneModel().
 				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
-				SetUpdate(bson.M{"$set": bazaarProduct}).
+				SetUpdate(bson.M{
+					"$setOnInsert": bson.M{
+						"_id": bazaarProduct.Id,
+						"hypixel_product_id": bazaarProduct.HypixelProductId,
+					},
+					"$set": bson.M{
+						"last_updated": bazaarProduct.LastUpdated,
+						"sell_data": bazaarProduct.SellData,
+						"buy_data": bazaarProduct.BuyData,
+						"sell_price": bazaarProduct.SellPrice,
+						"sell_volume": bazaarProduct.SellVolume,
+						"sell_moving_week": bazaarProduct.SellMovingWeek,
+						"sell_orders": bazaarProduct.SellOrders,
+						"buy_price": bazaarProduct.BuyPrice,
+						"buy_volume": bazaarProduct.BuyVolume,
+						"buy_moving_week": bazaarProduct.BuyMovingWeek,
+						"buy_orders": bazaarProduct.BuyOrders,
+						"margin": bazaarProduct.Margin,
+						"margin_percent": bazaarProduct.MarginPercent,
+					},
+				}).
 				SetUpsert(true),
+		)
+		historyModels = append(historyModels,
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetUpdate(bson.M{
+					"$setOnInsert": bson.M{
+						"_id": bazaarProduct.Id,
+						"hypixel_product_id": bazaarProduct.HypixelProductId,
+						"history_24h": constants.Base24hHistoryData,
+						"history_daily": []structs.SkyblockBazaarItemHistoryData{},
+					},
+					"$set": bson.M{
+						"last_updated": bazaarProduct.LastUpdated,
+					},
+				}).SetUpsert(true),
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetUpdate(bson.M{
+					"$pop": bson.M{
+						"history_24h": -1,
+					},
+				}),
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetUpdate(bson.M{
+					"$push": bson.M{
+						"history_24h": bson.M{
+							"time": start.Unix(),
+							"sell_price": bazaarProduct.SellPrice,
+							"buy_price": bazaarProduct.BuyPrice,
+						},
+					},
+				}),
 		)
 	}
 
-	err = database.UpdateBazaarItems(models)
+	err = database.BulkWriteUpdate(productModels, constants.MongoProductCollection)
+	if err != nil {
+		logging.Error("Error updating Bazaar Items, error: " + err.Error())
+		return
+	}
+	err = database.BulkWriteUpdate(historyModels, constants.MongoProductHistoryCollection)
 	if err != nil {
 		logging.Error("Error updating Bazaar Items, error: " + err.Error())
 		return

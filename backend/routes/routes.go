@@ -21,18 +21,23 @@ func InitRoutes() {
 	Router.NoRoute(func(c *gin.Context) { c.JSON(404, gin.H{"message": "Not Found"}) })
 	Router.NoMethod(func(c *gin.Context) { c.JSON(405, gin.H{"message": "Method Not Allowed"}) })
 
-	bazaar := Router.Group("/api/bazaar", cloudflareMiddleware())
+	bazaar := Router.Group("/api/bazaar")
 	{
-		bazaar.GET("/products", GetProducts)
 		bazaar.GET("/products/:id", GetProduct)
-		bazaar.GET("/crafts" , GetCrafts)
-		bazaar.GET("/demand", GetDemand)
-		bazaar.GET("/margin", GetMargin)
-		bazaar.GET("/margin_percent", GetMarginPercent)
-		bazaar.GET("/npc_resell", GetNpcResell)
 	}
 
-	recipes := Router.Group("/api/recipes")
+	bazaarProtected := Router.Group("/api/bazaar")//, cloudflareMiddleware())
+	{
+		bazaarProtected.GET("/products/:id/history", GetProductHistory)
+		bazaarProtected.GET("/products", GetProducts)
+		bazaarProtected.GET("/crafts", GetCrafts)
+		bazaarProtected.GET("/demand", GetDemand)
+		bazaarProtected.GET("/margin", GetMargin)
+		bazaarProtected.GET("/margin_percent", GetMarginPercent)
+		bazaarProtected.GET("/npc_resell", GetNpcResell)
+	}
+
+	recipes := Router.Group("/api/recipes", apiKeyMiddleware())
 	{
 		recipes.GET("/", GetRecipes)
 		recipes.POST("/", CreateRecipe)
@@ -41,21 +46,23 @@ func InitRoutes() {
 		recipes.DELETE("/:id", DeleteRecipe)
 	}
 
+	Router.GET("/api/hypixel_readable_item_names", GetHypixelReadableNames)
+
 	logging.Info("Routes initialized")
 }
 
 func cloudflareMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body structs.CloudflarePost
-		if err := c.BindJSON(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "Cloudflare Error"})
+		cfToken := c.Request.Header.Get("cf-turnstile-response")
+		if cfToken == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Missing cloudflare turnstile header"})
 			c.Abort()
 			return
 		}
 
 		form := url.Values{}
 		form.Add("secret", constants.CloudflareTurnstileSecret)
-		form.Add("response", body.Cf)
+		form.Add("response", cfToken)
 		form.Add("remoteip", c.ClientIP())
 
 		CloudflareResp, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", form)
@@ -73,6 +80,24 @@ func cloudflareMiddleware() gin.HandlerFunc {
 		}
 		if !CloudflareResponse.Success {
 			c.JSON(http.StatusUnauthorized, gin.H{"message": "Clouddflare Error", "errors": CloudflareResponse.Errors})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func apiKeyMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		apiToken := c.Request.Header.Get("Api-Key")
+		if apiToken == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Missing Api-Key header"})
+			c.Abort()
+			return
+		}
+		if apiToken != constants.ApiAuthToken {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 			c.Abort()
 			return
 		}

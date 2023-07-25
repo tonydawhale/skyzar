@@ -23,10 +23,10 @@ func GetRecipes() ([]structs.SkyblockItemRecipe, error) {
 		filter,
 	)
 	if err != nil {
-		return recipes, err
+		return nil, err
 	}
 	if err := cursor.All(context.Background(), &recipes); err != nil {
-		return recipes, err
+		return nil, err
 	}
 
 	return recipes, nil

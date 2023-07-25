@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"skyzar-backend/database"
+	"skyzar-backend/logging"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,5 +12,21 @@ func GetProducts(c *gin.Context) {
 }
 
 func GetProduct(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "Hello World"})
+	item, err := database.GetBazaarItem(c.Param("id"))
+	if err != nil {
+		logging.Error("Failed to get product, error: " + err.Error())
+		c.JSON(404, gin.H{"message": "Product not found"})
+		return
+	}
+	c.JSON(200, item)
+}
+
+func GetProductHistory(c *gin.Context) {
+	item, err := database.GetBazaarItemHistory(c.Param("id"))
+	if err != nil {
+		logging.Error("Failed to get product history, error: " + err.Error())
+		c.JSON(404, gin.H{"message": "Product history not found"})
+		return
+	}
+	c.JSON(200, item)
 }

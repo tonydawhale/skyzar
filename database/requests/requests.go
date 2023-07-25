@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"skyzar-backend/logging"
-	"skyzar-backend/structs"
+	"skyzar-database/logging"
+	"skyzar-database/structs"
 )
 
 func hypixelRequest(endpoint string) (*http.Response, error) {
