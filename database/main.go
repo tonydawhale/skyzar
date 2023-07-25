@@ -10,4 +10,6 @@ func main() {
 	constants.LoadConsts()
 	database.StartClient()
 	tasks.StartTasks()
+
+	select {}
 }

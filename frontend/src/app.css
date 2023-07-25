@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        font-family: 'Greycliff CF', sans-serif;
+        background-color: rgb(26, 27, 30);
+        background-size: cover;
+		scroll-behavior: smooth;
+        color: white;
+    }
+    *:focus {
+        outline: none;
+    }
+}

@@ -18,12 +18,33 @@ export default {
 					700: '#EB4F27',
 					800: '#CC4522',
 					900: '#A5371B'
-				}
+				},
+				dark: {
+					50: '#C1C2C5',
+					100: '#A6A7AB',
+					200: '#909296',
+					300: '#5C5F66',
+					400: '#373A40',
+					500: '#2C2E33',
+					600: '#25262B',
+					700: '#1A1B1E',
+					800: '#141517',
+					900: '#101113'
+				},
+				theme: {
+					50: '#E3FBFF',
+					100: '#D2F2FC',
+					200: '#A6E3F5',
+					300: '#78D3EE',
+					400: '#53C4E8',
+					500: '#3CBDE5',
+					600: '#2BB9E4',
+					700: '#18A2CB',
+					800: '#0090B6',
+					900: '#007DA1'
+				},
+				'text-theme': '#e9ecef'
 			},
-			// backgroundImage: (theme) => ({
-			// 	'hero-pattern': 'url(https://sky.shiiyu.moe/resources/img/bg.webp)',
-			// 	'footer-texture': 'url(https://sky.shiiyu.moe/resources/img/footer-texture.png)'
-			// }),
 			textShadow: {
 				sm: '0 1px 2px rgba(0, 0, 0, 0.1)',
 				default: '0 2px 4px rgba(0, 0, 0, 0.1)',

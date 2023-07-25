@@ -17,6 +17,9 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+var itemNames structs.HypixelReadableItemNames
+var itemNameKeys []string
+
 func StartTasks() {
 	s := gocron.NewScheduler(time.UTC)
 
@@ -27,7 +30,7 @@ func StartTasks() {
 }
 
 func refreshBazaarPriceData() {
-	logging.Debug("Refreshing Bazaar Data")
+	logging.Debug("Refreshing Bazaar Price Data")
 	start := time.Now()
 
 	bazaarData, err := requests.GetHypixelBazaarData()
@@ -36,13 +39,13 @@ func refreshBazaarPriceData() {
 		return
 	}
 
-	itemNames, err := database.GetHypixelReadableNames()
+	itemNames, err = database.GetHypixelReadableNames()
 	if err != nil {
 		logging.Error("Error getting Hypixel Readable Item Names, error: " + err.Error())
 		return
 	}
 
-	itemNameKeys := utils.ObjectKeys(itemNames.Items)
+	itemNameKeys = utils.ObjectKeys(itemNames.Items)
 
 	productModels := []mongo.WriteModel{}
 	historyModels := []mongo.WriteModel{}
@@ -51,49 +54,7 @@ func refreshBazaarPriceData() {
 		if product.ProductId == "ENCHANTED_CARROT_ON_A_STICK" {
 			continue
 		}
-		var bazaarProduct structs.SkyblockBazaarItem = structs.SkyblockBazaarItem{
-			HypixelProductId: product.ProductId,
-			LastUpdated: bazaarData.LastUpdated,
-			SellData: product.BuySummary,
-			BuyData: product.SellSummary,
-			SellVolume: product.QuickStatus.SellVolume,
-			SellMovingWeek: product.QuickStatus.SellMovingWeek,
-			SellOrders: product.QuickStatus.SellOrders,
-			BuyVolume: product.QuickStatus.BuyVolume,
-			BuyMovingWeek: product.QuickStatus.BuyMovingWeek,
-			BuyOrders: product.QuickStatus.BuyOrders,
-		}
-		if slices.Contains(itemNameKeys, product.ProductId) {
-			bazaarProduct.Id = itemNames.Items[product.ProductId]
-		} else {
-			bazaarProduct.Id = product.ProductId
-		}
-		if len(product.BuySummary) == 0 {
-			product.BuySummary = []structs.HypixelBazaarProductBuySellSummaryItem{
-				{
-					Amount: 0,
-					PricePerUnit: 0,
-					Orders: 0,
-				},
-			}
-		}
-		if len(product.SellSummary) == 0 {
-			product.SellSummary = []structs.HypixelBazaarProductBuySellSummaryItem{
-				{
-					Amount: 0,
-					PricePerUnit: 0,
-					Orders: 0,
-				},
-			}
-		}
-		bazaarProduct.SellPrice = product.BuySummary[0].PricePerUnit
-		bazaarProduct.BuyPrice = product.SellSummary[0].PricePerUnit
-		bazaarProduct.Margin = product.BuySummary[0].PricePerUnit - product.SellSummary[0].PricePerUnit
-		if product.BuySummary[0].PricePerUnit == 0 {
-			bazaarProduct.MarginPercent = 0
-		} else {
-			bazaarProduct.MarginPercent = (product.BuySummary[0].PricePerUnit - product.SellSummary[0].PricePerUnit) / product.BuySummary[0].PricePerUnit
-		}
+		var bazaarProduct structs.SkyblockBazaarItem = schemaBazaarItem(product, bazaarData.LastUpdated)
 		
 		productModels = append(productModels, 
 			mongo.NewUpdateOneModel().
@@ -198,4 +159,51 @@ func refreshSkyblockItemData() {
 	}
 
 	logging.Debug("Successfully refreshed Skyblock Item data in " + time.Since(start).String())
+}
+
+func schemaBazaarItem(data structs.HypixelBazaarProduct, lastUpdated int) structs.SkyblockBazaarItem {
+	var product structs.SkyblockBazaarItem = structs.SkyblockBazaarItem{
+		HypixelProductId: data.ProductId,
+		LastUpdated: lastUpdated,
+		SellData: data.BuySummary,
+		BuyData: data.SellSummary,
+		SellVolume: data.QuickStatus.SellVolume,
+		SellMovingWeek: data.QuickStatus.SellMovingWeek,
+		SellOrders: data.QuickStatus.SellOrders,
+		BuyVolume: data.QuickStatus.BuyVolume,
+		BuyMovingWeek: data.QuickStatus.BuyMovingWeek,
+		BuyOrders: data.QuickStatus.BuyOrders,
+	}
+	if slices.Contains(itemNameKeys, data.ProductId) {
+		product.Id = itemNames.Items[data.ProductId]
+	} else {
+		product.Id = data.ProductId
+	}
+	if len(data.BuySummary) == 0 {
+		data.BuySummary = []structs.HypixelBazaarProductBuySellSummaryItem{
+			{
+				Amount: 0,
+				PricePerUnit: 0,
+				Orders: 0,
+			},
+		}
+	}
+	if len(data.SellSummary) == 0 {
+		data.SellSummary = []structs.HypixelBazaarProductBuySellSummaryItem{
+			{
+				Amount: 0,
+				PricePerUnit: 0,
+				Orders: 0,
+			},
+		}
+	}
+	product.SellPrice = data.BuySummary[0].PricePerUnit
+	product.BuyPrice = data.SellSummary[0].PricePerUnit
+	product.Margin = data.BuySummary[0].PricePerUnit - data.SellSummary[0].PricePerUnit
+	if data.BuySummary[0].PricePerUnit == 0 {
+		product.MarginPercent = 0
+	} else {
+		product.MarginPercent = (data.BuySummary[0].PricePerUnit - data.SellSummary[0].PricePerUnit) / data.BuySummary[0].PricePerUnit
+	}
+	return product
 }
