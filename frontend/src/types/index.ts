@@ -1,6 +1,5 @@
 export interface BazaarItemHistory {
     _id: string;
-    hypixel_product_id: string;
     last_updated: number;
     history_24h: BazaarItemHistoryData[];
     history_daily: BazaarItemHistoryData[];
@@ -14,7 +13,7 @@ export interface BazaarItemHistoryData {
 
 export interface BazaarItem {
     _id: string;
-    hypixel_product_id: string;
+    display_name: string;
     last_updated: number;
     sell_data: BazaarItemBuySellSummary[];
     buy_data: BazaarItemBuySellSummary[];
@@ -38,7 +37,7 @@ export interface BazaarItemBuySellSummary {
 
 export interface BazaarTopItem {
     _id: string;
-    hypixel_product_id: string;
+    display_name: string;
     buy_price: number;
     buy_volume: number;
     margin: number;

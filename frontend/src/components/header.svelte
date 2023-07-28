@@ -1,7 +1,6 @@
 <script lang="ts">
     import { PUBLIC_HOST_URL } from '$env/static/public';
     import SearchOutline from 'flowbite-svelte-icons/SearchOutline.svelte'
-    import { MegaMenu } from 'flowbite-svelte'
 
     export let isSpotlightOpen: boolean;
 
@@ -40,7 +39,7 @@
     ]
 </script>
 
-<header class="bg-[rgb(26,27,30)] border-b-[0.0625rem] border-dark-500 border-solid h-[70px] max-h-[60px] p-[16px] box-border fixed top-0 left-0 right-0 inline-grid grid-cols-4 content-center select-none">  <!-- flex items-center select-none justify-between justify-items-center"> -->
+<header class="z-[1000] bg-[rgb(26,27,30)] border-b-[0.0625rem] border-dark-500 border-solid h-[70px] max-h-[60px] p-[16px] box-border fixed top-0 left-0 right-0 inline-grid grid-cols-4 content-center select-none">  <!-- flex items-center select-none justify-between justify-items-center"> -->
     <a href="/" class="flex items-center hover:scale-[1.01]">
         <img src="{PUBLIC_HOST_URL}/favicon.png" class="h-[35px] w-[35px] inline-block mr-[16px]" alt="skyzar logo"/>
         <p class="text-theme-700 font-bold text-[35px]">

@@ -15,6 +15,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/exp/slices"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var itemNames structs.HypixelReadableItemNames
@@ -22,8 +24,9 @@ var itemNameKeys []string
 
 func StartTasks() {
 	s := gocron.NewScheduler(time.UTC)
+	refreshBazaarPriceData()
 
-	s.Cron("* * * * *").Do(refreshBazaarPriceData)
+	// s.Cron("* * * * *").Do(refreshBazaarPriceData)
 	s.Cron("*/10 * * * *").Do(refreshSkyblockItemData)
 
 	s.StartAsync()
@@ -58,11 +61,11 @@ func refreshBazaarPriceData() {
 		
 		productModels = append(productModels, 
 			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetFilter(bson.M{"_id": bazaarProduct.Id}).
 				SetUpdate(bson.M{
 					"$setOnInsert": bson.M{
 						"_id": bazaarProduct.Id,
-						"hypixel_product_id": bazaarProduct.HypixelProductId,
+						"display_name": bazaarProduct.DisplayName,
 					},
 					"$set": bson.M{
 						"last_updated": bazaarProduct.LastUpdated,
@@ -84,11 +87,10 @@ func refreshBazaarPriceData() {
 		)
 		historyModels = append(historyModels,
 			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetFilter(bson.M{"_id": bazaarProduct.Id}).
 				SetUpdate(bson.M{
 					"$setOnInsert": bson.M{
 						"_id": bazaarProduct.Id,
-						"hypixel_product_id": bazaarProduct.HypixelProductId,
 						"history_24h": constants.Base24hHistoryData,
 						"history_daily": []structs.SkyblockBazaarItemHistoryData{},
 					},
@@ -97,14 +99,14 @@ func refreshBazaarPriceData() {
 					},
 				}).SetUpsert(true),
 			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetFilter(bson.M{"_id": bazaarProduct.Id}).
 				SetUpdate(bson.M{
 					"$pop": bson.M{
 						"history_24h": -1,
 					},
 				}),
 			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"hypixel_product_id": bazaarProduct.HypixelProductId}).
+				SetFilter(bson.M{"_id": bazaarProduct.Id}).
 				SetUpdate(bson.M{
 					"$push": bson.M{
 						"history_24h": bson.M{
@@ -163,7 +165,8 @@ func refreshSkyblockItemData() {
 
 func schemaBazaarItem(data structs.HypixelBazaarProduct, lastUpdated int) structs.SkyblockBazaarItem {
 	var product structs.SkyblockBazaarItem = structs.SkyblockBazaarItem{
-		HypixelProductId: data.ProductId,
+		Id: data.ProductId,
+		DisplayName: createDisplayName(data.ProductId),
 		LastUpdated: lastUpdated,
 		SellData: data.BuySummary,
 		BuyData: data.SellSummary,
@@ -173,11 +176,6 @@ func schemaBazaarItem(data structs.HypixelBazaarProduct, lastUpdated int) struct
 		BuyVolume: data.QuickStatus.BuyVolume,
 		BuyMovingWeek: data.QuickStatus.BuyMovingWeek,
 		BuyOrders: data.QuickStatus.BuyOrders,
-	}
-	if slices.Contains(itemNameKeys, data.ProductId) {
-		product.Id = itemNames.Items[data.ProductId]
-	} else {
-		product.Id = data.ProductId
 	}
 	if len(data.BuySummary) == 0 {
 		data.BuySummary = []structs.HypixelBazaarProductBuySellSummaryItem{
@@ -206,4 +204,27 @@ func schemaBazaarItem(data structs.HypixelBazaarProduct, lastUpdated int) struct
 		product.MarginPercent = (data.BuySummary[0].PricePerUnit - data.SellSummary[0].PricePerUnit) / data.BuySummary[0].PricePerUnit
 	}
 	return product
+}
+
+func createDisplayName(hypixel_product_id string) string {
+	var displayName string
+	if slices.Contains(itemNameKeys, hypixel_product_id) {
+		hypixel_product_id = itemNames.Items[hypixel_product_id]
+	}
+	if strings.HasPrefix(hypixel_product_id, "ENCHANTMENT_") {
+		if strings.HasPrefix(hypixel_product_id, "ENCHANTMENT_ULTIMATE_") {
+			displayName = strings.Replace(hypixel_product_id, "ENCHANTMENT_ULTIMATE_", "", 1)
+		} else {
+			displayName = strings.Replace(hypixel_product_id, "ENCHANTMENT_", "", 1)
+		}
+	} else if strings.HasPrefix(hypixel_product_id, "ESSENCE_") {
+		displayName = strings.Replace(hypixel_product_id, "ESSENCE_", "", 1) + " Essence"
+	} else {
+		displayName = hypixel_product_id
+	}
+	return ToProperCase(strings.ReplaceAll(displayName, "_", " "))
+}
+
+func ToProperCase(s string) string {
+	return cases.Title(language.Und).String(s)
 }

@@ -81,7 +81,7 @@ type SkyblockItemRecipe struct {
 
 type SkyblockBazaarItem struct {
 	Id 							string `json:"_id" bson:"_id"`
-	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	DisplayName 				string `json:"display_name" bson:"display_name"`
 	LastUpdated 				int `json:"last_updated" bson:"last_updated"`
 	SellData					[]HypixelBazaarProductBuySellSummaryItem `json:"sell_data" bson:"sell_data"`
 	BuyData						[]HypixelBazaarProductBuySellSummaryItem `json:"buy_data" bson:"buy_data"`
@@ -99,7 +99,6 @@ type SkyblockBazaarItem struct {
 
 type SkyblockBazaarItemHistory struct {
 	Id 							string `json:"_id" bson:"_id"`
-	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
 	LastUpdated 				int `json:"last_updated" bson:"last_updated"`
 	History24h					[]SkyblockBazaarItemHistoryData `json:"history_24h" bson:"history_24h"`
 	HistoryDaily				[]SkyblockBazaarItemHistoryData `json:"history_daily" bson:"history_daily"`
@@ -113,7 +112,7 @@ type SkyblockBazaarItemHistoryData struct {
 
 type SkyblockBazaarTopItem struct {
 	Id 							string `json:"_id,omitempty" bson:"_id,omitempty"`
-	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	DisplayName 				string `json:"display_name" bson:"display_name"`
 	BuyPrice 					float64 `json:"buy_price" bson:"buy_price"`
 	BuyVolume 					int `json:"buy_volume" bson:"buy_volume"`
 	Margin 						float64 `json:"margin" bson:"margin"`
@@ -124,7 +123,7 @@ type SkyblockBazaarTopItem struct {
 
 type SkyblockBazaarCraftableItem struct {
 	Id 							string `json:"_id,omitempty" bson:"_id,omitempty"`
-	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	DisplayName 				string `json:"display_name" bson:"display_name"`
 	EstimatedCost 				int `json:"estimated_cost" bson:"estimated_cost"`
 	EstimatedProfit 			int `json:"estimated_profit" bson:"estimated_profit"`
 	EstimatedProfitPercentage 	float64 `json:"estimated_profit_percentage" bson:"estimated_profit_percentage"`
@@ -133,8 +132,8 @@ type SkyblockBazaarCraftableItem struct {
 }
 
 type SkyblockBazaarCraftingResource struct {
-	Id 							primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	HypixelProductId 			string `json:"hypixel_product_id" bson:"hypixel_product_id"`
+	Id 							string `json:"_id,omitempty" bson:"_id,omitempty"`
+	DisplayName 				string `json:"display_name" bson:"display_name"`
 	ResourceId 					string `json:"resource_id" bson:"resource_id"`
 }
 

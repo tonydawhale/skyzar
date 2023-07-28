@@ -7,7 +7,6 @@ import (
 	"skyzar-backend/structs"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -31,12 +30,8 @@ func GetBazaarItem(id string) (structs.SkyblockBazaarItem, error) {
 
 	var item structs.SkyblockBazaarItem
 
-	regex := bson.M{"$regex": primitive.Regex{Pattern: id, Options: "i"}}
 	filter := bson.M{
-		"$or": []interface{}{
-			bson.M{"_id": regex},
-			bson.M{"hypixel_product_id": regex},
-		},
+		"_id": id,
 	}
 	err := collection.FindOne(
 		context.TODO(),
@@ -52,12 +47,8 @@ func GetBazaarItemHistory(id string) (structs.SkyblockBazaarItemHistory, error) 
 
 	var item structs.SkyblockBazaarItemHistory
 
-	regex := bson.M{"$regex": primitive.Regex{Pattern: id, Options: "i"}}
 	filter := bson.M{
-		"$or": []interface{}{
-			bson.M{"_id": regex},
-			bson.M{"hypixel_product_id": regex},
-		},
+		"_id": id,
 	}
 	err := collection.FindOne(
 		context.TODO(),
@@ -104,7 +95,7 @@ func GetTopCategory(category string, quota float64) ([]structs.SkyblockBazaarTop
 		SetProjection(
 			bson.M{
 				"_id": 1,
-				"hypixel_product_id": 1,
+				"display_name": 1,
 				"buy_price": 1,
 				"sell_price": 1,
 				"buy_volume": 1,

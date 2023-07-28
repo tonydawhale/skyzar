@@ -4,6 +4,6 @@
     export let item: BazaarTopItem;
 </script>
 
-<a href={`/product/${item.hypixel_product_id}`}>
-    {item._id}
+<a href={`/product/${item._id}`}>
+    {item.display_name}
 </a>
