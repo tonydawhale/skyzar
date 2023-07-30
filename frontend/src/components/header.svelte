@@ -1,8 +1,11 @@
 <script lang="ts">
     import { PUBLIC_HOST_URL } from '$env/static/public';
+
     import SearchOutline from 'flowbite-svelte-icons/SearchOutline.svelte'
+    import { Hamburger } from 'svelte-hamburgers';
 
     export let isSpotlightOpen: boolean;
+    export let isMenuOpen: boolean;
 
     let links = [
         {
@@ -18,23 +21,14 @@
             text: 'Margin (%)'
         },
         {
-            href: '/crafts',
-            text: 'Crafts'
-        },
-        {
-            href: '/resell',
-            text: 'NPC Resell'
-        }
-    ]
-
-    let menuItems = [
-        {
             href: 'https://github.com/tonydawhale/skyzar',
-            name: 'Github'
+            text: 'Github',
+            external: true
         },
         {
-            href: 'https://skyzar.app/api',
-            name: 'API'
+            href: 'https://ko-fi.com/tonydawhale',
+            text: 'Donate',
+            external: true
         }
     ]
 </script>
@@ -46,15 +40,24 @@
             skyzar
         </p>
     </a>
-    <div class="flex space-x-4 items-center">
-        {#each links as { href, text }}
-            <a {href} class="text-text-theme font-semibold text-[20px] hover:scale-[1.02]">
-                {text}
-            </a>
+    <div class="flex space-x-4 items-center max-lg:hidden">
+        {#each links as { href, text, external }}
+            {#if external}
+                <a {href} target="_blank" rel="noopener noreferrer" class="text-text-theme font-semibold text-[20px] hover:scale-[1.02]">
+                    {text}
+                </a>
+            {:else}
+                <a {href} class="text-text-theme font-semibold text-[20px] hover:scale-[1.02]">
+                    {text}
+                </a>
+            {/if}
         {/each}
         <button on:click={() => (isSpotlightOpen = !isSpotlightOpen)} class="rounded-3xl px-[16px] border-2 border-theme-700 h-[35px] flex items-center gap-2 hover:border-theme-500 hover:scale-[1.02]">
             <SearchOutline/>
             <p class="text-center">Search</p>
         </button>
+    </div>
+    <div class="lg:hidden flex items-center">
+        <Hamburger bind:open={isMenuOpen} --color="white"/>
     </div>
 </header>

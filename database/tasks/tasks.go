@@ -28,6 +28,7 @@ func StartTasks() {
 		logging.Fatal("Error loading timezone, error: " + e.Error())
 	}
 	s := gocron.NewScheduler(loc)
+	refreshSkyblockItemData()
 
 	s.Cron("* * * * *").Do(refreshBazaarPriceData)
 	s.Cron("*/10 * * * *").Do(refreshSkyblockItemData)

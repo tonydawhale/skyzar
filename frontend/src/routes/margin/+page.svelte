@@ -13,8 +13,8 @@
         </div>
     </div>
     
-    <div class="grid grid-cols-3 justify-items-center gap-4 mt-[16px]">
-        {#each data.items as item}
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-4 mt-[16px]">
+        {#each data.items as item, i (item._id)}
             <Topitemcard {item}/>
         {/each}
     </div>

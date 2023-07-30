@@ -49,6 +49,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.14
     version: 10.4.14(postcss@8.4.27)
+  chart.js:
+    specifier: ^4.3.2
+    version: 4.3.2
   eslint:
     specifier: ^8.45.0
     version: 8.45.0
@@ -73,9 +76,15 @@ devDependencies:
   svelte:
     specifier: ^4.0.5
     version: 4.0.5
+  svelte-chartjs:
+    specifier: ^3.1.2
+    version: 3.1.2(chart.js@4.3.2)(svelte@4.0.5)
   svelte-check:
     specifier: ^3.4.6
     version: 3.4.6(postcss@8.4.27)(svelte@4.0.5)
+  svelte-hamburgers:
+    specifier: ^4.1.1
+    version: 4.1.1(svelte@4.0.5)
   svelte-preprocess:
     specifier: ^5.0.4
     version: 5.0.4(postcss@8.4.27)(svelte@4.0.5)(typescript@5.1.6)
@@ -392,6 +401,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+
+  /@kurkle/color@0.3.2:
+    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+    dev: true
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -895,6 +908,13 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: true
+
+  /chart.js@4.3.2:
+    resolution: {integrity: sha512-pvQNyFOY1QmbmIr8oDORL16/FFivfxj8V26VFpFilMo4cNvkV5WXLJetDio365pd9gKUHGdirUTbqJfw8tr+Dg==}
+    engines: {pnpm: '>=7'}
+    dependencies:
+      '@kurkle/color': 0.3.2
     dev: true
 
   /chokidar@3.5.3:
@@ -2114,6 +2134,16 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
+  /svelte-chartjs@3.1.2(chart.js@4.3.2)(svelte@4.0.5):
+    resolution: {integrity: sha512-3+6gY2IJ9Ua8R9pk3iS1ypa7Z9OoXCJb9oPwIfTp7caJM+X+RrWnH2CTkGAq7FeSxc2nnmW08tYN88Q8Y+5M+w==}
+    peerDependencies:
+      chart.js: ^3.5.0 || ^4.0.0
+      svelte: ^3.45.0
+    dependencies:
+      chart.js: 4.3.2
+      svelte: 4.0.5
+    dev: true
+
   /svelte-check@3.4.6(postcss@8.4.27)(svelte@4.0.5):
     resolution: {integrity: sha512-OBlY8866Zh1zHQTkBMPS6psPi7o2umTUyj6JWm4SacnIHXpWFm658pG32m3dKvKFL49V4ntAkfFHKo4ztH07og==}
     hasBin: true
@@ -2155,6 +2185,14 @@ packages:
       espree: 9.6.1
       postcss: 8.4.27
       postcss-scss: 4.0.6(postcss@8.4.27)
+      svelte: 4.0.5
+    dev: true
+
+  /svelte-hamburgers@4.1.1(svelte@4.0.5):
+    resolution: {integrity: sha512-tHgP17HP1xd+0IKA/rSrnEOiyvbsL74SK1LOwjoi8dTwa41usAeQuWaS90sC2VOw87tnHcafV3G+fh1gubiOdA==}
+    peerDependencies:
+      svelte: ^3.46.4 || ^4.0.0
+    dependencies:
       svelte: 4.0.5
     dev: true
 

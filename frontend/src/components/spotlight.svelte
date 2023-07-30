@@ -7,35 +7,12 @@
     import { browser } from '$app/environment';
 
     export let isOpen: boolean;
+	export let isMenuOpen: boolean;
     let query = "";
 
     let items = [
         {
-            title: 'Revenant_Catalyst'
-        },
-		{
-            title: 'Revenant_Catalyst1'
-        },
-		{
-            title: 'Revenant_Catalyst2'
-        },
-		{
-            title: 'Revenant_Catalyst3'
-        },
-		{
-            title: 'Revenant_Catalyst4'
-        },
-		{
-            title: 'Revenant_Catalyst5'
-        },
-		{
-            title: 'Revenant_Catalyst6'
-        },
-		{
-            title: 'Revenant_Catalyst7'
-        },
-		{
-            title: 'Revenant_Catalyst8'
+            title: 'REVENANT_CATALYST'
         }
     ];
     $: results = matchSorter(items, query, { keys: ['title'] });
@@ -56,6 +33,7 @@
 	on:select={(event) => {
         goto(`/product/${event.detail.title}`)
 		isOpen = false
+		isMenuOpen = false
 	}}
 >
 	<div slot="headerLeft" class="items-center justify-center absolute top-0 bottom-0 left-0 flex z-[1] w-[3.125rem] border-0">

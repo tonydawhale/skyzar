@@ -7,10 +7,12 @@
 	import Spotlight from '$comp/spotlight.svelte';
 
     let isSpotlightOpen = false;
+    let isMenuOpen = false;
 
     import "nprogress/nprogress.css";
     import NProgress from "nprogress";
     import { navigating } from "$app/stores";
+	import Menu from '$comp/menu.svelte';
 
     NProgress.configure({
         minimum: 0.16,
@@ -39,10 +41,11 @@
 </svelte:head>
 
 <div class="block box-border">
-    <Header bind:isSpotlightOpen />
+    <Header bind:isSpotlightOpen bind:isMenuOpen/>
+    <Menu bind:open={isMenuOpen} bind:isSpotlightOpen/>
     <div class="flex box-border">
         <main class="grow shrink w-[100vw] box-border min-h-[100vh] pt-[86px] px-[16px] pb-[16px]">
-            <Spotlight bind:isOpen={isSpotlightOpen} />
+            <Spotlight bind:isOpen={isSpotlightOpen} bind:isMenuOpen/>
             <slot />
         </main>
     </div>
