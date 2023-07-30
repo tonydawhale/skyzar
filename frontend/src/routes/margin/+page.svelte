@@ -5,13 +5,17 @@
     export let data: {items: BazaarTopItem[], count: number}
 </script>
 
-<div class="select-none">
-    <p class="text-[50px] font-medium text-center">Top Margin ($)</p>
-    <p class="text-[25px] font-light text-center">Viewing <span class="text-theme-700 font-semibold">{data.count}</span> profitable products out of the <span class="text-theme-700 font-semibold">{1253}</span> total Hypixel Skyblock Bazaar Items</p>
-</div>
-
-<div class="grid gric-cols-3">
-    {#each data.items as item}
-        <Topitemcard {item}/>
-    {/each}
+<div class="mx-[12vw]">
+    <div class="mx-auto">
+        <div class="select-none">
+            <p class="text-[50px] font-medium text-center">Top Margin ($)</p>
+            <p class="text-[25px] font-light text-center">Viewing <span class="text-theme-700 font-semibold">{data.count}</span> profitable products out of the <span class="text-theme-700 font-semibold">{1253}</span> total Hypixel Skyblock Bazaar Items</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-3 justify-items-center gap-4 mt-[16px]">
+        {#each data.items as item}
+            <Topitemcard {item}/>
+        {/each}
+    </div>
 </div>

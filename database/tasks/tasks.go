@@ -23,10 +23,13 @@ var itemNames structs.HypixelReadableItemNames
 var itemNameKeys []string
 
 func StartTasks() {
-	s := gocron.NewScheduler(time.UTC)
-	refreshBazaarPriceData()
+	loc, e := time.LoadLocation("America/Los_Angeles")
+	if e != nil {
+		logging.Fatal("Error loading timezone, error: " + e.Error())
+	}
+	s := gocron.NewScheduler(loc)
 
-	// s.Cron("* * * * *").Do(refreshBazaarPriceData)
+	s.Cron("* * * * *").Do(refreshBazaarPriceData)
 	s.Cron("*/10 * * * *").Do(refreshSkyblockItemData)
 
 	s.StartAsync()

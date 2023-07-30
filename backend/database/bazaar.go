@@ -58,7 +58,7 @@ func GetBazaarItemHistory(id string) (structs.SkyblockBazaarItemHistory, error) 
 	return item, err
 }
 
-func GetBazaarItemNames() ([]string, error){
+func GetBazaarItemNames() ([]string, error) {
 	database := MongoClient.Database(constants.MongoDatabase)
 	collection := database.Collection(constants.MongoProductCollection)
 

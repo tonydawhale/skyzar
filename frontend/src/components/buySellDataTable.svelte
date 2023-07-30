@@ -8,9 +8,9 @@
 <Table striped={true} shadow hoverable={true}>
     <TableHead theadClass="bg-theme-700">
         <TableHeadCell>#</TableHeadCell>
-        <TableHeadCell>Number of Orders</TableHeadCell>
-        <TableHeadCell>Number of Items</TableHeadCell>
-        <TableHeadCell>Price Per Unit</TableHeadCell>
+        <TableHeadCell># of Orders</TableHeadCell>
+        <TableHeadCell># of Items</TableHeadCell>
+        <TableHeadCell>Cost Per Unit</TableHeadCell>
         <TableHeadCell>Total Price</TableHeadCell>
     </TableHead>
     <TableBody>
