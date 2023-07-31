@@ -14,7 +14,7 @@
     </div>
     
     <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-items-center gap-4 items-stretch">
-        {#each items as item (item._id)}
+        {#each data.items as item (item._id)}
             <Topitemcard {item}/>
         {/each}
     </div>

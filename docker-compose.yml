@@ -41,10 +41,14 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+    env_file:
+      - ./frontend/.env.production
     depends_on:
       - api
     ports:
       - 23572:23572
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   mongo:
     image: mongo:latest
