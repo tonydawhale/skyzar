@@ -58,15 +58,16 @@ func GetBazaarItemHistory(id string) (structs.SkyblockBazaarItemHistory, error) 
 	return item, err
 }
 
-func GetBazaarItemNames() ([]string, error) {
+func GetBazaarItemNames() (map[string]string, error) {
 	database := MongoClient.Database(constants.MongoDatabase)
 	collection := database.Collection(constants.MongoProductCollection)
 
 	var namesMongo []structs.SkyblockBazaarItemNameFromMongo
-	var names [] string
+
+	names := make(map[string]string)
 
 	filter := bson.M{}
-	opts := options.Find().SetProjection(bson.M{"_id": 1}).SetSort(bson.M{"_id": 1})
+	opts := options.Find().SetProjection(bson.M{"_id": 1, "display_name": 1}).SetSort(bson.M{"display_name": 1})
 	cursor, err := collection.Find(
 		context.TODO(),
 		filter,
@@ -79,13 +80,13 @@ func GetBazaarItemNames() ([]string, error) {
 	if err := cursor.All(context.Background(), &namesMongo); err != nil {
 		return nil, err
 	}
-	for _, id := range(namesMongo) {
-		names = append(names, id.Id)
+	for _, item := range(namesMongo) {
+		names[item.Id] = item.DisplayName
 	}
 	return names, nil
 }
 
-func GetTopCategory(category string, quota float64) ([]structs.SkyblockBazaarTopItem, error) {
+func GetTopCategory(category string, quota float64) ([]structs.SkyblockBazaarTopItem, int64, error) {
 	database := MongoClient.Database(constants.MongoDatabase)
 	collection := database.Collection(constants.MongoProductCollection)
 
@@ -110,10 +111,15 @@ func GetTopCategory(category string, quota float64) ([]structs.SkyblockBazaarTop
 		opts,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	if err := cursor.All(context.Background(), &items); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return items, nil
+
+	totalItems, err := collection.CountDocuments(context.Background(), bson.M{})
+	if err != nil {
+		return nil, 0, err
+	}
+	return items, totalItems, nil
 }

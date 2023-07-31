@@ -3,6 +3,8 @@
     import { page } from '$app/stores';
     import { PUBLIC_HOST_URL } from '$env/static/public';
 
+    export let data: { [key: string]: string };
+
     import Header from '$comp/header.svelte';
 	import Spotlight from '$comp/spotlight.svelte';
 
@@ -45,7 +47,7 @@
     <Menu bind:open={isMenuOpen} bind:isSpotlightOpen/>
     <div class="flex box-border">
         <main class="grow shrink w-[100vw] box-border min-h-[100vh] pt-[86px] px-[16px] pb-[16px]">
-            <Spotlight bind:isOpen={isSpotlightOpen} bind:isMenuOpen/>
+            <Spotlight bind:data bind:isOpen={isSpotlightOpen} bind:isMenuOpen/>
             <slot />
         </main>
     </div>

@@ -139,4 +139,5 @@ type SkyblockBazaarCraftingResource struct {
 
 type SkyblockBazaarItemNameFromMongo struct {
 	Id 							string `json:"_id,omitempty" bson:"_id,omitempty"`
+	DisplayName 				string `json:"display_name" bson:"display_name"`
 }

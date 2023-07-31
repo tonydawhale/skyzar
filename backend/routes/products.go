@@ -8,7 +8,12 @@ import (
 )
 
 func GetProducts(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "Hello World"})
+	items, err := database.GetBazaarItemNames()
+	if err != nil {
+		logging.Error("Failed to get products, error: " + err.Error())
+		c.JSON(500, gin.H{"message": "Error fetching products"})
+	}
+	c.JSON(200, items)
 }
 
 func GetProduct(c *gin.Context) {

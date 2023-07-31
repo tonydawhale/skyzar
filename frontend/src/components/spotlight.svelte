@@ -10,12 +10,10 @@
 	export let isMenuOpen: boolean;
     let query = "";
 
-    let items = [
-        {
-            title: 'REVENANT_CATALYST'
-        }
-    ];
-    $: results = matchSorter(items, query, { keys: ['title'] });
+	export let data: { [key: string]: string };
+
+    $: items = Object.entries(data).map(([id, name]) => ({ id, name}))
+    $: results = matchSorter(items, query, { keys: ['name'] }).slice(0, 10);
 </script>
 
 <SvelteSpotlight
@@ -29,9 +27,9 @@
 	modalClass={'w-[600px] max-w-[95%] bg-dark-600 shadow-lg overflow-hidden rounded-md'}
 	headerClass={'relative leading-[1.55rem] box-border block'}
 	inputClass={'pl-[3.125rem] rounded-b-[0.0625rem] border-solid border-[rgb(44,46,51)] h-[3.125rem] appearance-none w-full block text-left min-h-[3.125rem] rounded-t-[0.25rem] bg-dark-600 focus:outline-none'}
-	resultIdKey="title"
+	resultIdKey="name"
 	on:select={(event) => {
-        goto(`/product/${event.detail.title}`)
+        goto(`/product/${event.detail.id}`)
 		isOpen = false
 		isMenuOpen = false
 	}}
@@ -47,7 +45,7 @@
 			selected ? 'bg-dark-300' : ''
 		} `}
 	>
-		{result.title}
+		{result.name}
 		<!-- <p class="text-slate-500 text-sm">{result.description}</p> -->
 	</div>
 
