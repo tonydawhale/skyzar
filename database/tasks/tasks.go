@@ -15,8 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/exp/slices"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 var itemNames structs.HypixelReadableItemNames
@@ -32,12 +30,13 @@ func StartTasks() {
 
 	s.Cron("* * * * *").Do(refreshBazaarPriceData)
 	s.Cron("*/10 * * * *").Do(refreshSkyblockItemData)
+	s.Cron("0 0 * * *").Do(updateBazaarDailyData)
 
 	s.StartAsync()
 }
 
 func refreshBazaarPriceData() {
-	logging.Debug("Refreshing Bazaar Price Data")
+	logging.Debug("Refreshing Bazaar price data")
 	start := time.Now()
 
 	bazaarData, err := requests.GetHypixelBazaarData()
@@ -48,7 +47,7 @@ func refreshBazaarPriceData() {
 
 	itemNames, err = database.GetHypixelReadableNames()
 	if err != nil {
-		logging.Error("Error getting Hypixel Readable Item Names, error: " + err.Error())
+		logging.Error("Error getting Hypixel readable item names, error: " + err.Error())
 		return
 	}
 
@@ -125,25 +124,70 @@ func refreshBazaarPriceData() {
 
 	err = database.BulkWriteUpdate(productModels, constants.MongoProductCollection)
 	if err != nil {
-		logging.Error("Error updating Bazaar Items, error: " + err.Error())
+		logging.Error("Error updating Bazaar items, error: " + err.Error())
 		return
 	}
 	err = database.BulkWriteUpdate(historyModels, constants.MongoProductHistoryCollection)
 	if err != nil {
-		logging.Error("Error updating Bazaar Items, error: " + err.Error())
+		logging.Error("Error updating Bazaar items, error: " + err.Error())
 		return
 	}
 
 	logging.Debug("Successfully refreshed Bazaar data in " + time.Since(start).String())
 }
 
+func updateBazaarDailyData() {
+	logging.Debug("Refreshing Bazaar daily data")
+	start := time.Now()
+
+	models := []mongo.WriteModel{}
+
+	history, err := database.GetEntireBazaarHistory()
+	if err != nil {
+		logging.Error("Error getting Bazaar history, error: " + err.Error())
+		return
+	}
+
+	for _, item := range history {
+		var todaysHistory structs.SkyblockBazaarItemHistoryData = structs.SkyblockBazaarItemHistoryData{
+			Time: start.Unix(),
+		}
+		var sell = 0.0
+		var buy = 0.0
+		for _, historyData := range item.History24h {
+			sell += historyData.SellPrice
+			buy += historyData.BuyPrice
+		}
+		todaysHistory.SellPrice = sell / float64(len(item.History24h))
+		todaysHistory.BuyPrice = buy / float64(len(item.History24h))
+
+		models = append(models,
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": item.Id}).
+				SetUpdate(bson.M{
+					"$push": bson.M{
+						"history_daily": todaysHistory,
+					},
+				}),
+		)
+	}
+
+	err = database.BulkWriteUpdate(models, constants.MongoProductHistoryCollection)
+	if err != nil {
+		logging.Error("Error updating Bazaar items, error: " + err.Error())
+		return
+	}
+
+	logging.Debug("Successfully updated Bazaar daily data in " + time.Since(start).String())
+}
+
 func refreshSkyblockItemData() {
-	logging.Debug("Refreshing Skyblock Item Data")
+	logging.Debug("Refreshing Skyblock item data")
 	start := time.Now()
 
 	itemData, err := requests.GetHypixelSkyblockItemData()
 	if err != nil {
-		logging.Error("Error getting Hypixel Skyblock Item data, error: " + err.Error())
+		logging.Error("Error getting Hypixel Skyblock item data, error: " + err.Error())
 		return
 	}
 
@@ -161,10 +205,10 @@ func refreshSkyblockItemData() {
 
 	err = database.UpdateHypixelReadableNames(itemNames)
 	if err != nil {
-		logging.Error("Error updating Hypixel Readable Item Names, error: " + err.Error())
+		logging.Error("Error updating Hypixel readable item names, error: " + err.Error())
 	}
 
-	logging.Debug("Successfully refreshed Skyblock Item data in " + time.Since(start).String())
+	logging.Debug("Successfully refreshed Skyblock item data in " + time.Since(start).String())
 }
 
 func schemaBazaarItem(data structs.HypixelBazaarProduct, lastUpdated int) structs.SkyblockBazaarItem {
@@ -226,9 +270,5 @@ func createDisplayName(hypixel_product_id string) string {
 	} else {
 		displayName = hypixel_product_id
 	}
-	return ToProperCase(strings.ReplaceAll(displayName, "_", " "))
-}
-
-func ToProperCase(s string) string {
-	return cases.Title(language.Und).String(s)
+	return utils.ToProperCase(strings.ReplaceAll(displayName, "_", " "))
 }

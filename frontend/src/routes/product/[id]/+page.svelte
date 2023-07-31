@@ -61,11 +61,11 @@
             </div>
         </div>
     </div>
-    <div class="max-lg:col-span-2">
+    <div class="max-xl:col-span-2">
         <p class="font-bold text-[28px] text-theme text-center">Buy Orders</p>
         <BuySellDataTable data={data.product.buy_data} />
     </div>
-    <div class="max-lg:col-span-2">
+    <div class="max-xl:col-span-2">
         <p class="font-bold text-[28px] text-theme text-center">Sell Orders</p>
         <BuySellDataTable data={data.product.sell_data} />
     </div>

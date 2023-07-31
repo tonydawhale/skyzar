@@ -51,3 +51,21 @@ func GetHypixelReadableNames() (structs.HypixelReadableItemNames, error) {
 
 	return names, err
 }
+
+func GetEntireBazaarHistory() ([]structs.SkyblockBazaarItemHistory, error) {
+	database := MongoClient.Database(constants.MongoDatabase)
+	collection := database.Collection(constants.MongoProductHistoryCollection)
+
+	var history []structs.SkyblockBazaarItemHistory
+
+	cursor, err := collection.Find(
+		context.TODO(),
+		bson.M{},
+	)
+	if err != nil {
+		return history, err
+	}
+
+	err = cursor.All(context.Background(), &history)
+	return history, err
+}

@@ -16,7 +16,6 @@ var Router *gin.Engine
 
 func InitRoutes() {
 	Router.GET("/api/status", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Hello World"}) })
-	Router.GET("/favicon.ico", func (c *gin.Context) { c.Status(http.StatusAccepted) })
 
 	Router.NoRoute(func(c *gin.Context) { c.JSON(404, gin.H{"message": "Endpoint Not Found"}) })
 	Router.NoMethod(func(c *gin.Context) { c.JSON(405, gin.H{"message": "Method Not Allowed"}) })

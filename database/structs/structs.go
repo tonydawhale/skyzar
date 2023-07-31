@@ -94,7 +94,7 @@ type SkyblockBazaarItemHistory struct {
 }
 
 type SkyblockBazaarItemHistoryData struct {
-	Time 						int `json:"time" bson:"time"`
+	Time 						int64 `json:"time" bson:"time"`
 	SellPrice 					float64 `json:"sell_price" bson:"sell_price"`
 	BuyPrice 					float64 `json:"buy_price" bson:"buy_price"`
 }

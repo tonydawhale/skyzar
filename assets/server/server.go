@@ -3,9 +3,9 @@ package server
 import (
 	"strconv"
 
-	"skyzar-backend/constants"
-	"skyzar-backend/logging"
-	"skyzar-backend/routes"
+	"skyzar-assets/constants"
+	"skyzar-assets/logging"
+	"skyzar-assets/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
