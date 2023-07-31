@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-EXPOSE 23570
+EXPOSE 23571
 
 RUN CGO_ENABLED=0 GOOD=linux go build -o /assets
 

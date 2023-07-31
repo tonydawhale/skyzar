@@ -12,4 +12,6 @@ COPY . .
 
 RUN pnpm run build
 
-EXPOSE 
+EXPOSE 23572
+
+CMD ["pnpm", "run", "deploy"]

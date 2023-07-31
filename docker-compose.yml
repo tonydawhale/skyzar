@@ -10,6 +10,7 @@ services:
       - 23570:23570
     depends_on:
       - mongo
+      - database
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -38,6 +39,8 @@ services:
   website:
     build: ./frontend
     restart: unless-stopped
+    environment:
+      - NODE_ENV=production
     depends_on:
       - api
     ports:
