@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-family: 'Greycliff CF', sans-serif;
+        background-color: rgb(26, 27, 30);
+        background-size: cover;
+		scroll-behavior: smooth;
+        color: white;
+    }
+    *:focus {
+        outline: none;
+    }
+    body::-webkit-scrollbar {
+		background-color: #282828;
+	}
+	*::-webkit-scrollbar {
+		width: 12px;
+		height: 12px;
+	}
+	*::-webkit-scrollbar-thumb {
+		border-radius: 12px;
+		background-color: #18A2CB;
+	}
+}

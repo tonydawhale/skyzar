@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+     - ./backend/.env
+    ports:
+      - 23570:23570
+    depends_on:
+      - mongo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  assets:
+    build: ./assets
+    restart: unless-stopped
+    env_file:
+     - ./assets/.env
+    ports:
+      - 23571:23571
+    depends_on:
+      - mongo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  database:
+    build: ./database
+    restart: unless-stopped
+    env_file:
+     - ./database/.env
+    depends_on:
+      - mongo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  website:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - 23572:23572
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - 23573:23573
+    environment:
+      MONGO_INITDB_DATABASE: skyzar
+    volumes:
+      - ~./mongo:/data/db
+    command: mongod --quiet --logpath /dev/null --port 23573
+
+networks:
+  default:
+    driver: bridge

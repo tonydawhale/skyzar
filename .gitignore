@@ -4,3 +4,5 @@
 *.exe
 *.exe~
 *.so
+old_skyzar_data.json
+.DS_Store
