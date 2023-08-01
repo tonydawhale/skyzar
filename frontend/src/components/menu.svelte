@@ -44,7 +44,7 @@
                 </a>
             {/if}
         {/each}
-        <button on:click={() => (isSpotlightOpen = !isSpotlightOpen)} class="rounded-3xl px-[16px] border-2 border-theme-700 h-[35px] flex items-center gap-2 hover:border-theme-500 hover:scale-[1.02]">
+        <button on:click={() => {isSpotlightOpen = !isSpotlightOpen; open = !open}} class="rounded-3xl px-[16px] border-2 border-theme-700 h-[35px] flex items-center gap-2 hover:border-theme-500 hover:scale-[1.02]">
             <SearchOutline/>
             <p class="text-center">Search</p>
         </button>

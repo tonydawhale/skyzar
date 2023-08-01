@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { BazaarItem, BazaarItemHistory } from "$types";
     import BuySellDataTable from "$comp/buySellDataTable.svelte";
-    import History24hChart from "$comp/charts/history_24h.svelte";
+    import HistoryChart from "$comp/charts/history.svelte";
 
     export let data: { product: BazaarItem, productHistory: BazaarItemHistory}
 </script>
@@ -9,7 +9,7 @@
 <div class="grid grid-cols-2 gap-[40px] mx-[12vw] select-none">
     <div class="col-span-2">
         <p class="text-center font-semibold text-theme text-[28px] mb-[16px]">{data.product.display_name}</p>
-        <div class="border-2 border-theme-700 rounded-lg p-[16px]">
+        <div class="border-2 border-theme-700 rounded-lg p-[16px]" id="quick_stats">
             <div class="text-center font-semibold text-theme text-[20px]">Quick Stats</div>
             <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-[16px]">
                 <div>
@@ -61,16 +61,28 @@
             </div>
         </div>
     </div>
-    <div class="max-xl:col-span-2">
+    <div class="max-xl:col-span-2" id="buy_orders">
         <p class="font-bold text-[28px] text-theme text-center">Buy Orders</p>
         <BuySellDataTable data={data.product.buy_data} />
     </div>
-    <div class="max-xl:col-span-2">
+    <div class="max-xl:col-span-2" id="sell_orders">
         <p class="font-bold text-[28px] text-theme text-center">Sell Orders</p>
         <BuySellDataTable data={data.product.sell_data} />
     </div>
-    <div class="col-span-2 rounded-lg border-2 border-theme-700 p-[16px]">
+    <div class="col-span-2 rounded-lg border-2 border-theme-700 p-[16px]" id="history_24h">
         <p class="font-bold text-[28px] text-theme text-center">24H Price History</p>
-        <History24hChart data={data.productHistory.history_24h} />
+        <HistoryChart data={data.productHistory.history_24h} />
+    </div>
+    <div class="col-span-2 rounded-lg border-2 border-theme-700 p-[16px]" id="history_7d">
+        <p class="font-bold text-[28px] text-theme text-center">7 Day Price History</p>
+        <HistoryChart data={data.productHistory.history_daily} labelType={'date'} limit={7} />
+    </div>
+    <div class="col-span-2 rounded-lg border-2 border-theme-700 p-[16px]" id="history_30d">
+        <p class="font-bold text-[28px] text-theme text-center">30 Day Price History</p>
+        <HistoryChart data={data.productHistory.history_daily} labelType={'date'} limit={30} />
+    </div>
+    <div class="col-span-2 rounded-lg border-2 border-theme-700 p-[16px]" id="history_all_time">
+        <p class="font-bold text-[28px] text-theme text-center">All Time Price History</p>
+        <HistoryChart data={data.productHistory.history_daily} labelType={'date'} />
     </div>
 </div>
