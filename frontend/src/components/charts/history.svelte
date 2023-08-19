@@ -27,7 +27,7 @@
     export let labelType: 'time' | 'date' = 'time'
     export let limit: number = 0;
 
-    $: history_data = limit > 0 ? data.slice(0, data.length > limit ? limit : data.length) : data
+    $: history_data = limit > 0 ? data.slice(limit > data.length ? 0 : data.length - limit, data.length) : data
 
     $: chartData = {
         labels: labelType === 'time' ? history_data.map((item) => {
