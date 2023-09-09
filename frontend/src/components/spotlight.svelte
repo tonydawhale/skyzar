@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SearchOutline from 'flowbite-svelte-icons/SearchOutline.svelte'
-    import SvelteSpotlight from 'svelte-spotlight/SvelteSpotlight.svelte';
+    import SvelteSpotlight from 'svelte-spotlight';
     import { matchSorter } from 'match-sorter';
 
     import { goto } from '$app/navigation';
