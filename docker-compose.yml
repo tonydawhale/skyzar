@@ -14,18 +14,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  assets:
-    build: ./assets
-    restart: unless-stopped
-    env_file:
-     - ./assets/.env
-    ports:
-      - 23571:23571
-    depends_on:
-      - mongo
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   database:
     build: ./database
     restart: unless-stopped
